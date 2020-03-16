@@ -4,13 +4,14 @@ import sys
 import json
 import random
 import pdb
-import timeit
 
-from dtk_pymod_core import *
+import matplotlib.pyplot as plt
+
 import dtk_nodedemog as nd
 import dtk_generic_intrahost as gi
 import dtk_vaccine_intervention as vi
-import matplotlib.pyplot as plt
+
+from dtk_pymod_core import *
 
 """
 In this app, we use the compiled C++ DTK (EMOD) python modules (dtk_*) and demonstrate them being 
@@ -231,14 +232,6 @@ def distribute_interventions( t ):
             #gi.give_intervention( ( hum_id, vaccine ) )
             if gi.get_age( hum_id ) < 70*365:
                 vi.distribute( gi.get_individual_for_iv( hum_id ) )
-
-
-    # For trivial demo, remove ART after two years.
-    elif t == vaccine_disribution_timestep+730:
-        for human in human_pop:
-            hum_id = human["id"] 
-            remove_art( hum_id )
-
 
 def setup_callbacks():
     """
