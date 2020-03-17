@@ -118,7 +118,7 @@ def do_vitaldynamics_update( human_pop, graveyard, contagion, census_cb = None, 
             #print( "Calling cfp with {0}, {1}, {2}, and {3}.".format( str(ipm), str(ip), str(age), str(hum_id) ) )
             # TBD: Optimization? I happen to know that this is only necessary for females of a 
             # certain age. But technically that knowledge is for nd.
-            nd.consider_for_pregnancy( ( ipm, ip, hum_id, age, 1.0 ) )
+            nd.consider_for_pregnancy( ( ipm, ip, hum_id, age ) ) # 1.0 is dt
 
         #print( str( json.loads(gi.serialize( hum_id ))["individual"]["susceptibility"] ) )
         if gi.is_infected( hum_id ):

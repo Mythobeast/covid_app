@@ -27,6 +27,7 @@
     "Post_Infection_Acquisition_Multiplier": 0,
     "Post_Infection_Transmission_Multiplier": 0,
     "Run_Number": 1,
+    "Simulation_Timestep": 1,
     "Simulation_Type": "GENERIC_SIM",
     "Susceptibility_Type": "BINARY",
     "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_OFF"

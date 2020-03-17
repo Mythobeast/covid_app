@@ -25,10 +25,11 @@ to be introduced.
 human_pop = []
 nursery = {} # store newborn counter by timestep (dict of int to int for now)
 timestep = 0
+dt = 1
 random.seed( 445 ) # I like the number 4
 
 # constants/parameters
-vaccine_disribution_timestep = 2
+vaccine_distribution_timestep = 1
 outbreak_timesteps = [ 1 ]
 outbreak_coverage = 0.002
 sim_duration = 180
@@ -100,7 +101,6 @@ def expose_callback( individual_id ):
     some math. To be heterogeneous, you can use the individual id. The action and prob 
     parameters can be ignored.
     """
-
     # The following code is just to demo the use of TBHIV-specific getters
     if gi.is_infected( individual_id ): 
         #print( "Individual {0} is apparently already infected.".format( individual_id ) )
@@ -116,7 +116,11 @@ def expose_callback( individual_id ):
     #    if random.random() < outbreak_coverage: # let's infect some people at random (outbreaks)
     #        print( "Let's force-infect (outbreak) uninfected, non-immune individual based on random draw." )
     #        return 1
-    if (timestep == 1) and (individual_id == 13):
+    # If timesteps is 0, 2, 4, 6 and target tstep == 1, do it on 2. if == 5, do it on 6. current_timestep // dt
+    #if (timestep//dt == 1//dt) and (individual_id == 13): # this is cleverer but costly
+    # I tried moving this to a single force_infect call in distribute_interventions but somehow that was slower!!
+    if (individual_id == 13) and ( timestep in outbreak_timesteps ):
+        print( "Force-infecting individual to seed outbreak." )
         return 1    # force-infect individual 13 at time 0
     else:
         if individual_id == 0:
@@ -204,7 +208,11 @@ def distribute_interventions( t ):
     Function to isolated distribution of interventions to individuals.
     Interventions are separate python modules. 
     """
-    if t == close_schools_timestep:
+    #if t in outbreak_timesteps:
+        #print( "Force-infecting individual to seed outbreak." )
+        #gi.force_infect(13)
+
+    if t//dt == close_schools_timestep//dt:
         print( "SCHOOL CLOSURE INTERVENTION" )
         FROM_CHILD_TO_CHILD = 0.25
         FROM_CHILD_TO_ADULT = 0.75
@@ -214,7 +222,8 @@ def distribute_interventions( t ):
         factors = [[FROM_CHILD_TO_CHILD, FROM_ADULT_TO_CHILD],
                    [FROM_CHILD_TO_ADULT, FROM_ADULT_TO_ADULT]]
 
-    if t == vaccine_disribution_timestep:
+    if t//dt == vaccine_distribution_timestep//dt:
+        print( "Distributing mortality-blocking vaccine to effect age-based mortality." )
         for human in human_pop:
             hum_id = human["id"] 
 
@@ -262,7 +271,9 @@ def run( from_script = False ):
     del human_pop[:]
 
     setup_callbacks()
-    nd.populate_from_files() 
+    global dt
+    dt = json.loads( open( "gi.json" ).read() )[ "Simulation_Timestep" ]
+    nd.populate_from_files( dt ) 
     if len(human_pop) == 0:
         print( "Failed to create any people in populate_from_files. This isn't going to work!" )
         sys.exit(0)
@@ -272,7 +283,7 @@ def run( from_script = False ):
     global contagion_buckets
     dis_death_cum = 0
     #global contagion_bucket_homog 
-    for t in range(0,sim_duration): # for one year
+    for t in range( 0, sim_duration, dt ): # for one year
         timestep = t
 
         stat_pop = do_shedding_update( human_pop )
