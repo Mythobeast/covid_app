@@ -3,7 +3,7 @@ Application code using pymod_covid.
 
 If you are starting by git cloning this repo, you'll need to do the following single step of setup:
 ```
-  python3 -m pip install dtk_generic_intrahost --index-url https://packages.idmod.org/api/pypi/pypi-production/simple --upgrade --force-reinstall --no-cache-dir
+  python3 -m pip install dtk_generic_intrahost --index-url https://packages.idmod.org/api/pypi/idm-pypi-production/simple --upgrade --force-reinstall --no-cache-dir
 
 ```
 
